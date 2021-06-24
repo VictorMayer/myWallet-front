@@ -1,6 +1,6 @@
 import styled from "styled-components"
 
-export default function Log(){
+export default function Log({data}){
     return(
         <LogContainer>
             <p>Não há registros de<br/> entrada ou saída</p>

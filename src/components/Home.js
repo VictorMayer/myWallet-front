@@ -1,9 +1,53 @@
-import Log from "./Log"
+import Log from "./Log";
+import Loader from './Loader';
 import styled from "styled-components";
+import UserContext from "../contexts/UserContext";
 import { RiLogoutBoxRLine, RiAddCircleLine, RiIndeterminateCircleLine } from "react-icons/ri";
-
+import { useEffect, useState, useContext } from "react";
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Home(){
+    
+    const history = useHistory();
+    const [data, setData] = useState([]);
+    const [loader, setLoader] = useState(true);
+    const { user } = useContext(UserContext);
+    const config = {
+        headers: {
+            "Authorization": `Bearer ${user.token}`
+        }
+    }
+    useEffect(()=>{
+        const promisse = axios.get("http://localhost:4000/user",config)
+        promisse.then((answer)=>{
+            setLoader(false);
+            console.log("this is the data");
+            console.log(answer.data);
+            setData(answer.data);
+        });
+        promisse.catch((answer)=>{
+            console.log(answer);
+            if(answer.response.status === 401)history.push("/login");
+        });
+    },[]);
+
+    function logout(){
+        const confirm = window.confirm("Você tem certeza que deseja sair?");
+        if(!confirm)return;
+        
+        const body = {
+            id: user.user.id
+        }
+        console.log(body);
+        const promisse = axios.delete("http://localhost:4000/user",{data:body});
+        promisse.then(()=>{
+            history.push("/login");
+        }).catch(answer=>{
+            console.log(answer);
+            alert("Houve um problema ao sair!");
+        })
+    }
 
     function goToNewFunds(type){
         
@@ -11,12 +55,14 @@ export default function Home(){
 
     return(
         <HomePage>
+            { loader ? <Loader/> :
+            <>
             <div className="title">
                 <p>Olá, fulano</p>
-                <span><RiLogoutBoxRLine className="icon"/></span>
+                <span onClick={logout}><RiLogoutBoxRLine className="icon"/></span>
             </div>
             
-            <Log/>
+            <Log data={data}/>
             
             <div className="new-transaction-options">
                 <div className="funds-option" onClick={()=>goToNewFunds("income")}>
@@ -28,6 +74,8 @@ export default function Home(){
                     <p>Nova<br/> saída</p>
                 </div>
             </div>
+            </>
+            }
         </HomePage>
     )
 }

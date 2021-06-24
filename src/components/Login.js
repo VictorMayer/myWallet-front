@@ -1,33 +1,54 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useHistory } from 'react-router-dom';
+import UserContext from "../contexts/UserContext";
 import styled from "styled-components";
+import Loader from './Loader';
 import axios from "axios";
 
 export default function Login(){
 
     const [data, setData] = useState({email:"", password:""});
-
+    const [requesting, setRequesting] = useState(false);
+    const { setUser } = useContext(UserContext);
+    const history = useHistory();
+    
     function login(e){
         e.preventDefault();
+        setRequesting(true);
         const body = {
             email: data.email,
             password:data.password
         }
-        const promisse = axios.post("http://localhost:4000/login");
-        promisse.then(()=>{
-            //after backend
+        const promisse = axios.post("http://localhost:4000/sign-in",body);
+        promisse.then((answer)=>{
+            setRequesting(false);
+            console.log(answer);
+            setUser(answer.data);
+            history.push("/");
+        }).catch((err)=>{
+            console.log(err.response);
+            setRequesting(false);
         })
+    }
+
+    function goToSignUp(){
+        history.push("/sign-up");
     }
 
     return(
         <>
         <PageContainer>
+            {requesting ? <Loader/> :
+            <>
             <p className="logo">MyWallet</p>
             <form onSubmit={login}>
-                <input disabled={false} required type="email" placeholder="E-mail" value={data.email} onChange={(e)=>setData({...data, email:e.target.value})}></input>
-                <input disabled={false} required type="password" placeholder="Senha" value={data.password} onChange={(e)=>setData({...data, password: e.target.value})}></input>
+                <input required type="email" placeholder="E-mail" value={data.email} onChange={(e)=>setData({...data, email:e.target.value})}></input>
+                <input required type="password" placeholder="Senha" value={data.password} onChange={(e)=>setData({...data, password: e.target.value})}></input>
                 <button type="submit">Entrar</button>
             </form>
-            <p className="toggle-sign">Primeira Vez? Cadastre-se!</p>
+            <p onClick={goToSignUp} className="toggle-sign">Primeira Vez? Cadastre-se!</p>
+            </>
+            }
         </PageContainer>
         </>
     )
@@ -84,6 +105,10 @@ const PageContainer = styled.div`
             border-style: none;
             background: #A328D6;
             color:#fff;
+            cursor:pointer;
+            &:hover{
+                font-size: 21px;
+            }
         }
     }
 
