@@ -13,7 +13,6 @@ export default function Home(){
     const [data, setData] = useState([]);
     const [loader, setLoader] = useState(true);
     const { user } = useContext(UserContext);
-    const username = (user.user.name.split(" ")) ;
     useEffect(()=>{
         const config = {
             headers: {
@@ -30,7 +29,7 @@ export default function Home(){
             console.log(answer);
             if(answer.response.status === 401)history.push("/login");
         });
-    },[]);
+    },[]); // eslint-disable-line react-hooks/exhaustive-deps
 
     function logout(){
         const confirm = window.confirm("Você tem certeza que deseja sair?");
@@ -58,7 +57,7 @@ export default function Home(){
             { loader ? <Loader/> :
             <>
             <div className="title">
-                <p>Olá, {username[0]}</p>
+                <p>Olá, {user.user.name.split(" ")[0]}</p>
                 <span onClick={logout}><RiLogoutBoxRLine className="icon"/></span>
             </div>
             
