@@ -22,7 +22,7 @@ export default function Registrations() {
             password: data.password,
             confirmPassword: data.confirmPassword
         }
-        const promisse = axios.post("http://localhost:4000/sign-up",body);
+        const promisse = axios.post("https://my-walliet.herokuapp.com/sign-up",body);
         promisse.then((answer)=>{
             console.log(answer);
             setRequesting(false);
@@ -71,8 +71,10 @@ const PageContainer = styled.div`
         font-size: 32px;
         font-family: 'Saira Stencil One', cursive; 
         color:#fff;
+        cursor: default;
         &:hover{
-            font-size: 32.75px;
+            font-size: 34px;
+            margin-bottom: 38px;
         }
     }
 
@@ -111,7 +113,7 @@ const PageContainer = styled.div`
             color:#fff;
             cursor:pointer;
             &:hover{
-                font-size: 21px;
+                font-size: 21.5px;
             }
         }
     }
@@ -124,7 +126,6 @@ const PageContainer = styled.div`
         cursor: pointer;
 
         &:hover{
-            text-decoration: underline;
             font-size: 15.5px;
         }
     }

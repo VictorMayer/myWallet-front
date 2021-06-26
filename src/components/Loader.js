@@ -17,6 +17,7 @@ const PreloaderStyle = styled.div`
     align-items: center;
     height:60vh;
     p{
+        margin-right:5px;
         margin-top:25px;
         color:white;
         font-size: 20px;

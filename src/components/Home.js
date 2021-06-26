@@ -13,16 +13,16 @@ export default function Home(){
     const [data, setData] = useState([]);
     const [loader, setLoader] = useState(true);
     const { user } = useContext(UserContext);
-    const config = {
-        headers: {
-            "Authorization": `Bearer ${user.token}`
-        }
-    }
+    const username = (user.user.name.split(" ")) ;
     useEffect(()=>{
-        const promisse = axios.get("http://localhost:4000/user",config)
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${user.token}`
+            }
+        }
+        const promisse = axios.get("https://my-walliet.herokuapp.com/user",config)
         promisse.then((answer)=>{
             setLoader(false);
-            console.log("this is the data");
             console.log(answer.data);
             setData(answer.data);
         });
@@ -40,7 +40,7 @@ export default function Home(){
             id: user.user.id
         }
         console.log(body);
-        const promisse = axios.delete("http://localhost:4000/user",{data:body});
+        const promisse = axios.delete("https://my-walliet.herokuapp.com/user",{data:body});
         promisse.then(()=>{
             history.push("/login");
         }).catch(answer=>{
@@ -50,7 +50,7 @@ export default function Home(){
     }
 
     function goToNewFunds(type){
-        
+        history.push(`/new-cashflow/${type}`);
     }
 
     return(
@@ -58,7 +58,7 @@ export default function Home(){
             { loader ? <Loader/> :
             <>
             <div className="title">
-                <p>Olá, fulano</p>
+                <p>Olá, {username[0]}</p>
                 <span onClick={logout}><RiLogoutBoxRLine className="icon"/></span>
             </div>
             
@@ -94,13 +94,22 @@ const HomePage = styled.div`
         font-size: 26px;
         font-weight: 700;
         color:#fff;
-
+        cursor:default;
+        p:hover{
+            font-size:27px;
+            margin-bottom: -1px;
+        }
         .icon{
             position: fixed;
             right: 25px;
             top: 25px;
             color: #fff;
             font-size: 32px;
+            &:hover{
+                font-size:36px;
+                right:23px;
+                top:23px;
+            }
         }
     }
 
@@ -125,6 +134,16 @@ const HomePage = styled.div`
             width: calc(50vw - 33px);
             .icon{
                 font-size: 22px;
+            }
+            &:hover{
+                font-size: 18px;
+                padding-top: 9px;
+                p{
+                    text-shadow: -2px 2px rgba(0,0,0,0.2);
+                }
+                .icon{
+                    font-size:24px;
+                }
             }
         }
     }
